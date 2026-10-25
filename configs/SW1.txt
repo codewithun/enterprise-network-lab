@@ -1,0 +1,57 @@
+! ==================================================
+! Enterprise Network Lab - Switch SW1
+! Platform: Cisco Catalyst 2960 (Packet Tracer)
+! Function: VLAN Segmentation and Trunking
+! ==================================================
+
+hostname SW1
+
+! --------------------------------------------------
+! VLAN Access Ports
+! --------------------------------------------------
+
+! VLAN 10 - ADMIN
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 10
+!
+
+! VLAN 20 - IT
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 20
+!
+
+! VLAN 30 - SERVER
+interface FastEthernet0/3
+ switchport mode access
+ switchport access vlan 30
+!
+
+! VLAN 40 - GUEST
+interface FastEthernet0/4
+ switchport mode access
+ switchport access vlan 40
+!
+
+! --------------------------------------------------
+! Trunk Link to Router R1
+! --------------------------------------------------
+interface GigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40
+!
+
+! --------------------------------------------------
+! Unused Management Interface
+! --------------------------------------------------
+interface Vlan1
+ no ip address
+ shutdown
+!
+
+! --------------------------------------------------
+! Spanning Tree
+! --------------------------------------------------
+spanning-tree mode pvst
+spanning-tree extend system-id

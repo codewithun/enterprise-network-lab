@@ -1,0 +1,88 @@
+! ==================================================
+! Enterprise Network Lab - Router R1
+! Platform: Cisco 2911 (Packet Tracer)
+! Function: Inter-VLAN Routing, DHCP, Guest ACL
+! ==================================================
+
+hostname R1
+
+! --------------------------------------------------
+! DHCP Excluded Addresses
+! --------------------------------------------------
+ip dhcp excluded-address 192.168.10.1 192.168.10.20
+ip dhcp excluded-address 192.168.20.1 192.168.20.20
+ip dhcp excluded-address 192.168.40.1 192.168.40.20
+
+! --------------------------------------------------
+! DHCP Pools
+! --------------------------------------------------
+ip dhcp pool ADMIN
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool IT
+ network 192.168.20.0 255.255.255.0
+ default-router 192.168.20.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool GUEST
+ network 192.168.40.0 255.255.255.0
+ default-router 192.168.40.1
+ dns-server 8.8.8.8
+!
+
+! --------------------------------------------------
+! Physical Interface
+! --------------------------------------------------
+interface GigabitEthernet0/0
+ no ip address
+ no shutdown
+!
+
+! --------------------------------------------------
+! Router-on-a-Stick: 802.1Q Subinterfaces
+! --------------------------------------------------
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+!
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+!
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+!
+interface GigabitEthernet0/0.40
+ encapsulation dot1Q 40
+ ip address 192.168.40.1 255.255.255.0
+ ip access-group GUEST-IN in
+!
+
+! --------------------------------------------------
+! Guest Network Access Control
+! --------------------------------------------------
+ip access-list extended GUEST-IN
+ deny ip 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
+ permit ip any any
+!
+
+! --------------------------------------------------
+! Unused Interfaces
+! --------------------------------------------------
+interface GigabitEthernet0/1
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
